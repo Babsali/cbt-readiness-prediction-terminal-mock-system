@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Result</title>
+    <style>
+      body {
+        font-family: Arial;
+        margin: 50px;
+        background: #f5f7fb;
+        text-align: center;
+      }
+      .card {
+        background: white;
+        padding: 40px;
+        border-radius: 15px;
+        max-width: 500px;
+        margin: auto;
+      }
+      .score {
+        font-size: 60px;
+        color: #1a56db;
+      }
+      .btn {
+        padding: 12px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        color: white;
+        background: #1a56db;
+        display: inline-block;
+        margin: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Exam Submitted!</h1>
+      <div class="score">{{ score }} / {{ total }}</div>
+      <h2>{% set pct = (score/total*100) if total>0 else 0 %}{{ pct|int }}%</h2>
+      <p>
+        {% if pct >= 50 %}Readiness: GOOD - Keep it up!{% else %}Readiness:
+        NEEDS IMPROVEMENT - Study more{% endif %}
+      </p>
+      <br />
+      <a class="btn" href="/exams">Take Another Exam</a>
+      <a class="btn" style="background: #0e9f6e" href="/attempts"
+        >View All Results</a
+      >
+      <a class="btn" style="background: #6b7280" href="/">Home</a>
+    </div>
+  </body>
+</html>

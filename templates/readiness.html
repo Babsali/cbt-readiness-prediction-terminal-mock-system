@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Readiness Prediction</title>
+    <style>
+      body {
+        font-family: Arial;
+        margin: 30px;
+        background: #f5f7fb;
+      }
+      .card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+      }
+      th {
+        background: #1a56db;
+        color: white;
+      }
+      .badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        color: white;
+        font-weight: bold;
+      }
+      .green {
+        background: #0e9f6e;
+      }
+      .orange {
+        background: #d97706;
+      }
+      .red {
+        background: #dc2626;
+      }
+      .blue {
+        background: #1a56db;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>🎯 Student Readiness Prediction Dashboard</h2>
+      <p>This predicts JAMB readiness based on average CBT performance</p>
+      <a href="/">Home</a> | <a href="/exams">Exams</a> |
+      <a href="/attempts">All Attempts</a>
+    </div>
+
+    <div class="card">
+      <h3>Prediction Summary ({{ stats|length }} Students)</h3>
+      <table>
+        <tr>
+          <th>Student</th>
+          <th>Full Name</th>
+          <th>Attempts</th>
+          <th>Avg Score %</th>
+          <th>Prediction</th>
+        </tr>
+        {% for s in stats %}
+        <tr>
+          <td>{{ s['username'] }}</td>
+          <td>{{ s['full_name'] }}</td>
+          <td>{{ s['attempts'] }}</td>
+          <td><b>{{ s['avg'] }}%</b></td>
+          <td>
+            <span class="badge {{ s['color'] }}">{{ s['prediction'] }}</span>
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
+      {% if stats|length == 0 %}
+      <p>No student attempts yet. Take some exams first!</p>
+      {% endif %}
+    </div>
+
+    <div class="card" style="border-left: 5px solid #1a56db">
+      <h4>How Prediction Works:</h4>
+      <p>
+        <b>Logic:</b> Average Score = (Total Correct / Total Questions) * 100
+      </p>
+      <ul>
+        <li>
+          >= 70% = <b style="color: green">HIGHLY READY</b> - Likely to pass
+          JAMB
+        </li>
+        <li>
+          50% - 69% = <b style="color: orange">MODERATELY READY</b> - Needs
+          improvement
+        </li>
+        <li>
+          < 50% = <b style="color: red">NOT READY</b> - Needs intensive study
+        </li>
+      </ul>
+      <p>
+        This can be improved with Machine Learning in future (Random Forest,
+        etc.)
+      </p>
+    </div>
+  </body>
+</html>

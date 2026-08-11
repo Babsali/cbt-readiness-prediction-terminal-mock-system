@@ -1,0 +1,64 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Create Exam</title>
+    <style>
+      body {
+        font-family: Arial;
+        margin: 40px;
+        background: #f5f7fb;
+      }
+      .card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        max-width: 600px;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 10px;
+        margin: 6px 0;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+      }
+      button {
+        padding: 12px;
+        background: #c27803;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Create New Exam</h2>
+      <form method="POST">
+        <input
+          name="title"
+          placeholder="Exam Title e.g. JAMB Mock 1"
+          required
+        />
+        <input
+          name="duration"
+          type="number"
+          placeholder="Duration in minutes e.g. 30"
+          required
+          value="30"
+        />
+        <label>Created By (Teacher/Admin ID)</label>
+        <select name="created_by">
+          {% for u in users %}
+          <option value="{{ u['user_id'] }}">
+            {{ u['username'] }} - {{ u['role'] }}
+          </option>
+          {% endfor %}
+        </select>
+        <button type="submit">Create Exam</button>
+      </form>
+      <br /><a href="/">Home</a> | <a href="/exams">View Exams</a>
+    </div>
+  </body>
+</html>

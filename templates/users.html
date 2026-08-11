@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Users</title>
+    <style>
+      body {
+        font-family: Arial;
+        margin: 40px;
+        background: #f5f7fb;
+      }
+      .card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+      }
+      th {
+        background: #f3f4f6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>All Users</h2>
+      <a href="/add_user">+ Add User</a> | <a href="/">Home</a>
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Full Name</th>
+          <th>Role</th>
+          <th>Created</th>
+        </tr>
+        {% for u in users %}
+        <tr>
+          <td>{{ u['user_id'] }}</td>
+          <td>{{ u['username'] }}</td>
+          <td>{{ u['full_name'] }}</td>
+          <td>{{ u['role'] }}</td>
+          <td>{{ u['created_at'] }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </body>
+</html>

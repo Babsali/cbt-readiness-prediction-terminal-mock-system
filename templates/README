@@ -1,0 +1,13 @@
+# CBT Readiness Prediction System
+
+A Flask-based Computer-Based Test (CBT) system that evaluates and predicts JAMB/UTME readiness.
+
+## Features
+- User Management (Student, Teacher, Admin)
+- Question Bank Management
+- Exam Creation & Question Linking
+- CBT Exam Taking & Auto Scoring
+- Result Tracking
+- **Readiness Prediction Dashboard**
+
+## Prediction Logic

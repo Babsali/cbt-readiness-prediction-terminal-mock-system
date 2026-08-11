@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Manage Exam</title>
+    <style>
+      body {
+        font-family: Arial;
+        margin: 30px;
+        background: #f5f7fb;
+      }
+      .card {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+      }
+      .linked {
+        background: #d1fae5;
+      }
+      .btn {
+        padding: 5px 10px;
+        border-radius: 5px;
+        text-decoration: none;
+        color: white;
+      }
+      .add {
+        background: #1a56db;
+      }
+      .remove {
+        background: #dc2626;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Manage: {{ exam['title'] }} (ID: {{ exam['exam_id'] }})</h2>
+      <a href="/exams">Back to Exams</a> | <a href="/">Home</a> |
+      <a href="/take_exam/{{ exam['exam_id'] }}">Take This Exam</a>
+      <p>Linked Questions: {{ linked_ids|length }}</p>
+    </div>
+    <h3>All Questions - Click to Add/Remove</h3>
+    {% for q in all_questions %}
+    <div class="card {% if q['question_id'] in linked_ids %}linked{% endif %}">
+      <b
+        >Q{{ q['question_id'] }} {% if q['question_id'] in linked_ids %}✓
+        LINKED{% endif %}</b
+      >
+      [{{ q['correct_answer'] }}] {{ q['question_text'][:100] }}...<br />
+      {{ q['option_a'] }} | {{ q['option_b'] }} | {{ q['option_c'] }} | {{
+      q['option_d'] }}<br /><br />
+      {% if q['question_id'] in linked_ids %}
+      <a
+        class="btn remove"
+        href="/exam/{{ exam['exam_id'] }}/unlink/{{ q['question_id'] }}"
+        >Remove from Exam</a
+      >
+      {% else %}
+      <a
+        class="btn add"
+        href="/exam/{{ exam['exam_id'] }}/link/{{ q['question_id'] }}"
+        >Add to Exam</a
+      >
+      {% endif %}
+    </div>
+    {% endfor %}
+  </body>
+</html>

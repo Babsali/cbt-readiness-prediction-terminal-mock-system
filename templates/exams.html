@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Exams</title>
+    <style>
+      body {
+        font-family: Arial;
+        margin: 40px;
+        background: #f5f7fb;
+      }
+      .card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+      }
+      .btn {
+        padding: 8px 12px;
+        border-radius: 6px;
+        text-decoration: none;
+        color: white;
+        margin: 2px;
+        display: inline-block;
+      }
+      .blue {
+        background: #1a56db;
+      }
+      .green {
+        background: #0e9f6e;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>All Exams ({{ exams|length }})</h2>
+      <a href="/add_exam">+ Create Exam</a> | <a href="/">Home</a>
+    </div>
+    {% for e in exams %}
+    <div class="card">
+      <b>{{ e['title'] }}</b> - {{ e['duration_minutes'] }} mins - By: {{
+      e['username'] }}<br />
+      ID: {{ e['exam_id'] }} | Created: {{ e['created_at'] }}<br /><br />
+      <a class="btn blue" href="/exam/{{ e['exam_id'] }}/manage"
+        >Manage Questions</a
+      >
+      <a class="btn green" href="/take_exam/{{ e['exam_id'] }}"
+        >Take Exam (CBT)</a
+      >
+    </div>
+    {% endfor %}
+  </body>
+</html>

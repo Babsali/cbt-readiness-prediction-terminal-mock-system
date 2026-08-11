@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Add User</title>
+    <style>
+      body {
+        font-family: Arial;
+        margin: 40px;
+        background: #f5f7fb;
+      }
+      .card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        max-width: 500px;
+      }
+      input,
+      select {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+      }
+      button {
+        padding: 12px;
+        background: #1a56db;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Add New User</h2>
+      <form method="POST">
+        <input
+          name="username"
+          placeholder="Username (e.g. john_student)"
+          required
+        />
+        <input
+          name="full_name"
+          placeholder="Full Name (e.g. John Doe)"
+          required
+        />
+        <input
+          name="password"
+          type="password"
+          placeholder="Password"
+          required
+        />
+        <select name="role" required>
+          <option value="Student">Student</option>
+          <option value="Teacher">Teacher</option>
+          <option value="Admin">Admin</option>
+        </select>
+        <button type="submit">Create User</button>
+      </form>
+      <br /><a href="/">Back to Home</a> | <a href="/users">View Users</a>
+    </div>
+  </body>
+</html>

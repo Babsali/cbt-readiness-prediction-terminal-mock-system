@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Results</title>
+    <style>
+      body {
+        font-family: Arial;
+        margin: 40px;
+        background: #f5f7fb;
+      }
+      .card {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background: #1a56db;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>All Student Attempts ({{ attempts|length }})</h2>
+      <a href="/">Home</a> | <a href="/exams">Exams</a>
+    </div>
+    <div class="card">
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>Student</th>
+          <th>Exam</th>
+          <th>Score</th>
+          <th>Total</th>
+          <th>%</th>
+          <th>Date</th>
+        </tr>
+        {% for a in attempts %}
+        <tr>
+          <td>{{ a['attempt_id'] }}</td>
+          <td>{{ a['username'] }}</td>
+          <td>{{ a['title'] }}</td>
+          <td>{{ a['score'] }}</td>
+          <td>{{ a['total'] }}</td>
+          <td>
+            {{ ((a['score']/a['total']*100) if a['total']>0 else 0)|int }}%
+          </td>
+          <td>{{ a['attempted_at'] }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </body>
+</html>

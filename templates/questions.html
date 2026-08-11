@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Questions</title>
+    <style>
+      body {
+        font-family: Arial;
+        margin: 40px;
+        background: #f5f7fb;
+      }
+      .card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+      }
+      th,
+      td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+      }
+      th {
+        background: #f3f4f6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>All Questions ({{ questions|length }})</h2>
+      <a href="/add_question">+ Add Question</a> | <a href="/">Home</a>
+    </div>
+    {% for q in questions %}
+    <div class="card">
+      <b
+        >Q{{ q['question_id'] }} [{{ q['difficulty'] }} | {{ q['topic'] }} | {{
+        q['source_flag'] }}]</b
+      >
+      - Ans: {{ q['correct_answer'] }}<br />
+      {{ q['question_text'] }}<br /><br />
+      A) {{ q['option_a'] }}<br />B) {{ q['option_b'] }}<br />C) {{
+      q['option_c'] }}<br />D) {{ q['option_d'] }}
+    </div>
+    {% endfor %}
+  </body>
+</html>

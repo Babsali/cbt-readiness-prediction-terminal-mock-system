@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Add Question</title>
+    <style>
+      body {
+        font-family: Arial;
+        margin: 40px;
+        background: #f5f7fb;
+      }
+      .card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        max-width: 700px;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 10px;
+        margin: 6px 0;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+      }
+      button {
+        padding: 12px;
+        background: #0e9f6e;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        width: 100%;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+      }
+      .row > div {
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Add New Question</h2>
+      <form method="POST">
+        <textarea
+          name="question_text"
+          placeholder="Question Text"
+          rows="3"
+          required
+        ></textarea>
+        <input name="option_a" placeholder="Option A" required />
+        <input name="option_b" placeholder="Option B" required />
+        <input name="option_c" placeholder="Option C" required />
+        <input name="option_d" placeholder="Option D" required />
+        <div class="row">
+          <div>
+            <label>Correct Answer</label
+            ><select name="correct_answer">
+              <option>A</option>
+              <option>B</option>
+              <option>C</option>
+              <option>D</option>
+            </select>
+          </div>
+          <div>
+            <label>Difficulty</label
+            ><select name="difficulty">
+              <option>Easy</option>
+              <option>Medium</option>
+              <option>Hard</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <input name="topic" placeholder="Topic (e.g. Algebra)" required />
+          </div>
+          <div>
+            <select name="source_flag">
+              <option value="Manual">Manual</option>
+              <option value="AI-Generated">AI-Generated</option>
+            </select>
+          </div>
+        </div>
+        <button type="submit">Save Question</button>
+      </form>
+      <br /><a href="/">Back to Home</a> |
+      <a href="/questions">View Questions</a>
+    </div>
+  </body>
+</html>

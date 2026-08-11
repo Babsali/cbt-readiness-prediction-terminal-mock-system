@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+instance/
+venv/
+.env
+database/cbt_system.db
+*.db
+.DS_Store
