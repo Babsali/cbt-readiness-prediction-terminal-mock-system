@@ -2,11 +2,15 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 import sqlite3
 import os
 from werkzeug.security import generate_password_hash
-# import joblib # Uncomment this when you have model.pkl
+import joblib
+import numpy as np
 
 app = Flask(__name__)
 app.secret_key = 'readiness_secret_key_2026'
 DB_PATH = "database/cbt_system.db"
+
+# Load ML model once at startup
+model = joblib.load('model.pkl')
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)
@@ -96,7 +100,7 @@ def add_question():
         conn = get_db()
         conn.execute("""INSERT INTO Questions
         (question_text, option_a, option_b, option_c, option_d, correct_answer, difficulty, topic, source_flag)
-        VALUES (?,?,?,?,?)""",
+        VALUES (?,?,?,?,?,?,?,?,?)""",
         (request.form['question_text'], request.form['option_a'], request.form['option_b'],
          request.form['option_c'], request.form['option_d'], request.form['correct_answer'],
          request.form['difficulty'], request.form['topic'], request.form['source_flag']))
@@ -252,45 +256,45 @@ def readiness_dashboard():
     conn.close()
     return render_template("readiness.html", stats=stats, all_attempts=data)
 
-# ===== NEW PREDICTION ROUTE =====
+# ===== ML PREDICTION ROUTE =====
 @app.route('/predict', methods=['GET', 'POST'])
 def predict():
     if request.method == 'POST':
-        # Get the 8 features for your thesis
-        features = [
-            float(request.form['avg_response_time_sec']),
-            float(request.form['revision_rate']),
-            float(request.form['accuracy_easy']),
-            float(request.form['accuracy_medium']),
-            float(request.form['accuracy_hard']),
-            float(request.form['time_management_score']),
-            float(request.form['completion_rate']),
-            float(request.form['consistency_score'])
-        ]
+        # 1. Get the 8 features for your thesis from the form
+        try:
+            features = [
+                float(request.form['avg_response_time_sec']),
+                float(request.form['revision_rate']),
+                float(request.form['accuracy_easy']),
+                float(request.form['accuracy_medium']),
+                float(request.form['accuracy_hard']),
+                float(request.form['time_management_score']),
+                float(request.form['completion_rate']),
+                float(request.form['consistency_score'])
+            ]
+        except ValueError:
+            flash("Please enter valid numbers for all fields")
+            return render_template('predict.html')
 
-        # TODO: Load your trained model
-        # model = joblib.load('model.pkl')
-        # prediction = model.predict([features])[0]
-        # proba = model.predict_proba([features])[0][1]
+        # 2. Predict with the real ML model
+        features_np = np.array([features])
+        prediction_int = model.predict(features_np)[0] # 0 or 1
+        probability = model.predict_proba(features_np)[0][1] # probability of class 1 = Ready
 
-        # Placeholder logic for now
-        avg_acc = (features[2] + features[3] + features[4]) / 3
-        readiness_score = (avg_acc * 0.4) + (features[5] * 0.3) + (features[6] * 0.2) + (features[7] * 0.1)
-
-        if readiness_score > 0.7:
+        # 3. Convert to readable output
+        if prediction_int == 1:
             prediction = "READY FOR EXAM"
             color = "#0e9f6e"
-        elif readiness_score > 0.5:
-            prediction = "MODERATELY READY"
-            color = "#c27803"
         else:
             prediction = "NOT READY"
             color = "#dc2626"
 
+        score = round(probability * 100, 2)
+
         return render_template("predict_result.html",
                                prediction=prediction,
                                color=color,
-                               score=round(readiness_score*100, 2),
+                               score=score,
                                features=features)
 
     return render_template('predict.html')

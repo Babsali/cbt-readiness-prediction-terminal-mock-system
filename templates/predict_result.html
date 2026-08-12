@@ -1,6 +1,42 @@
-<!doctype html><html><head><title>Result</title></head>
-<body style="text-align:center; padding:50px; font-family:Arial;">
-<h1 style="color:{{ color }};">{{ prediction }}</h1>
-<h2>Readiness Score: {{ score }}%</h2>
-<a href="/predict">Test Another Student</a> | <a href="/">Dashboard</a>
-</body></html>
+<!doctype html>
+<html>
+<head>
+<title>Readiness Prediction Result</title>
+<style>
+  body { text-align:center; padding:40px; font-family:Arial, sans-serif; background:#f8f9fa; }
+ .card { background:white; padding:30px; border-radius:12px; max-width:700px; margin:auto; box-shadow:0 4px 12px rgba(0,0,0,0.1); }
+  h1 { font-size:2.2em; margin-bottom:10px; }
+ .score { font-size:1.5em; font-weight:bold; color:#333; margin-bottom:20px; }
+  table { width:100%; border-collapse:collapse; margin-top:20px; text-align:left; }
+  th, td { padding:10px; border-bottom:1px solid #eee; }
+  th { background:#f1f1f1; }
+ .btn { display:inline-block; margin:10px 5px; padding:10px 20px; background:#2563eb; color:white; text-decoration:none; border-radius:6px; }
+ .btn:hover { background:#1e40af; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1 style="color:{{ color }};">{{ prediction }}</h1>
+  <div class="score">Model Confidence: {{ score }}%</div>
+  <p>This prediction was made using your trained RandomForest model with 8 features.</p>
+
+  <h3>Input Features</h3>
+  <table>
+    <tr><th>Feature</th><th>Value</th></tr>
+    <tr><td>Avg Response Time (sec)</td><td>{{ features[0] }}</td></tr>
+    <tr><td>Revision Rate</td><td>{{ features[1] }}</td></tr>
+    <tr><td>Accuracy - Easy</td><td>{{ features[2] }}</td></tr>
+    <tr><td>Accuracy - Medium</td><td>{{ features[3] }}</td></tr>
+    <tr><td>Accuracy - Hard</td><td>{{ features[4] }}</td></tr>
+    <tr><td>Time Management Score</td><td>{{ features[5] }}</td></tr>
+    <tr><td>Completion Rate</td><td>{{ features[6] }}</td></tr>
+    <tr><td>Consistency Score</td><td>{{ features[7] }}</td></tr>
+  </table>
+
+  <div style="margin-top:25px;">
+    <a href="/predict" class="btn">Test Another Student</a>
+    <a href="/" class="btn" style="background:#6b7280;">Dashboard</a>
+  </div>
+</div>
+</body>
+</html>
