@@ -28,6 +28,9 @@
       .green {
         background: #0e9f6e;
       }
+      .red { /* v1.2.0 new */
+        background: #dc2626;
+      }
     </style>
   </head>
   <body>
@@ -45,6 +48,10 @@
       >
       <a class="btn green" href="/take_exam/{{ e['exam_id'] }}"
         >Take Exam (CBT)</a
+      >
+      <!-- v1.2.0: Anti-Cheat Violations -->
+      <a class="btn red" href="/admin/violations/{{ e['exam_id'] }}"
+        >View Violations</a
       >
     </div>
     {% endfor %}

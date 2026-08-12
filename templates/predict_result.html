@@ -6,21 +6,27 @@
   body { text-align:center; padding:40px; font-family:Arial, sans-serif; background:#f8f9fa; }
  .card { background:white; padding:30px; border-radius:12px; max-width:700px; margin:auto; box-shadow:0 4px 12px rgba(0,0,0,0.1); }
   h1 { font-size:2.2em; margin-bottom:10px; }
- .score { font-size:1.5em; font-weight:bold; color:#333; margin-bottom:20px; }
+ .score { font-size:1.5em; font-weight:bold; color:#333; margin-bottom:10px; }
+ .meta { font-size:0.95em; color:#6b7280; margin-bottom:20px; }
   table { width:100%; border-collapse:collapse; margin-top:20px; text-align:left; }
   th, td { padding:10px; border-bottom:1px solid #eee; }
-  th { background:#f1f1f1; }
+  th { background:#f1f1f1; width: 60%; }
  .btn { display:inline-block; margin:10px 5px; padding:10px 20px; background:#2563eb; color:white; text-decoration:none; border-radius:6px; }
  .btn:hover { background:#1e40af; }
+ .badge { display:inline-block; padding:4px 10px; border-radius:20px; font-size:0.85em; background:#eef2ff; color:#3730a3; }
 </style>
 </head>
 <body>
 <div class="card">
   <h1 style="color:{{ color }};">{{ prediction }}</h1>
-  <div class="score">Model Confidence: {{ score }}%</div>
-  <p>This prediction was made using your trained RandomForest model with 8 features.</p>
+  <div class="score">Confidence: {{ score }}%</div>
+  <div class="meta">
+    Model Used: <span class="badge">{{ model_used }}</span>
+  </div>
 
-  <h3>Input Features</h3>
+  <p style="color:#4b5563;">Prediction based on 8 behavioral + performance features from the last attempt.</p>
+
+  <h3>Input Features Used</h3>
   <table>
     <tr><th>Feature</th><th>Value</th></tr>
     <tr><td>Avg Response Time (sec)</td><td>{{ features[0] }}</td></tr>
@@ -35,7 +41,8 @@
 
   <div style="margin-top:25px;">
     <a href="/predict" class="btn">Test Another Student</a>
-    <a href="/" class="btn" style="background:#6b7280;">Dashboard</a>
+    <a href="/readiness" class="btn" style="background:#10b981;">Teacher Dashboard</a>
+    <a href="/" class="btn" style="background:#6b7280;">Home</a>
   </div>
 </div>
 </body>

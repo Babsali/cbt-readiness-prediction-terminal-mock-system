@@ -23,6 +23,17 @@
       .option:hover {
         background: #eef2ff;
       }
+      #startBtn {
+        padding: 15px;
+        width: 100%;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 18px;
+        cursor: pointer;
+      }
+      #examForm { display: none; }
     </style>
   </head>
   <body>
@@ -40,7 +51,14 @@
       questions.
     </div>
     {% else %}
-    <form method="POST" action="/submit_exam">
+
+    <!-- v1.2.0: Anti-Cheat Start Button -->
+    <div class="card" id="startCard">
+      <p><b>Read Instructions:</b> Do not switch tabs, copy, paste, or right-click during the exam. All actions will be logged.</p>
+      <button id="startBtn" onclick="startExam()">START EXAM</button>
+    </div>
+
+    <form method="POST" action="/submit_exam" id="examForm">
       <input type="hidden" name="exam_id" value="{{ exam['exam_id'] }}" />
       <div class="card">
         <label>Select Student Taking Exam:</label>
@@ -98,5 +116,35 @@
       </div>
     </form>
     {% endif %}
+
+    <!-- v1.2.0: Anti-Cheat Logging Script -->
+    <script>
+      let examActive = false;
+      const examId = {{ exam['exam_id'] }};
+
+      function startExam() {
+        examActive = true;
+        document.getElementById('startCard').style.display = 'none';
+        document.getElementById('examForm').style.display = 'block';
+        logEvent('exam_start');
+      }
+
+      window.addEventListener('blur', () => {
+        if(examActive) logEvent('tab_switch');
+      });
+      document.addEventListener('copy', () => { if(examActive) logEvent('copy'); });
+      document.addEventListener('paste', () => { if(examActive) logEvent('paste'); });
+      document.addEventListener('contextmenu', e => { 
+        if(examActive) {e.preventDefault(); logEvent('right_click');}
+      });
+
+      function logEvent(type) {
+        fetch('/api/log_event', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({event_type: type, exam_id: examId})
+        });
+      }
+    </script>
   </body>
 </html>

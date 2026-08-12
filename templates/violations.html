@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Violations for {{ exam['title'] }}</title>
+    <style>
+      body { font-family: Arial; margin: 40px; background: #f5f7fb; }
+      .card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+      th { background: #dc2626; color: white; }
+      .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+      .tab_switch { background: #fef3c7; color: #92400e; }
+      .copy { background: #dbeafe; color: #1e40af; }
+      .paste { background: #dbeafe; color: #1e40af; }
+      .right_click { background: #fee2e2; color: #991b1b; }
+      .blur { background: #f3e8ff; color: #6b21a8; }
+      .back { padding: 8px 12px; background: #1a56db; color: white; text-decoration: none; border-radius: 6px; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>🚨 Anti-Cheat Violations: {{ exam['title'] }}</h2>
+      <p><b>Exam ID:</b> {{ exam['exam_id'] }} | <b>Total Events:</b> {{ events|length }}</p>
+      <a class="back" href="/exams">← Back to Exams</a>
+    </div>
+
+    <div class="card">
+      {% if events %}
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Username</th>
+            <th>Event Type</th>
+            <th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for ev in events %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ ev['username'] }}</td>
+            <td><span class="badge {{ ev['event_type'] }}">{{ ev['event_type'] }}</span></td>
+            <td>{{ ev['timestamp'] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p><b>No violations recorded for this exam yet.</b></p>
+      <p>Take the exam and switch tabs / copy / right-click to generate events.</p>
+      {% endif %}
+    </div>
+  </body>
+</html>

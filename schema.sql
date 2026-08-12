@@ -1,7 +1,7 @@
-
 -- ============================================
 -- ReadinessPredictionSystem - Single Tenant Offline CBT
--- SQLite Schema - 7 Tables - No tenant_id (Proof of single-tenant)
+-- SQLite Schema - 8 Tables - No tenant_id (Proof of single-tenant)
+-- v1.2.0: Added Anti-Cheat Proctoring
 -- ============================================
 
 PRAGMA foreign_keys = ON;
@@ -98,4 +98,14 @@ CREATE TABLE IF NOT EXISTS Prediction (
     diagnostic_text TEXT, -- e.g. "Weak in Hard Questions, Topic: Algebra"
     prediction_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (attempt_id) REFERENCES Student_Attempt(attempt_id) ON DELETE CASCADE
+);
+
+-- 8. Proctoring_Events - v1.2.0 Anti-Cheat Module
+CREATE TABLE IF NOT EXISTS Proctoring_Events (
+    event_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    exam_id INTEGER NOT NULL,
+    username TEXT NOT NULL,
+    event_type TEXT NOT NULL, -- tab_switch, copy, paste, right_click, blur
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (exam_id) REFERENCES Exam(exam_id) ON DELETE CASCADE
 );
