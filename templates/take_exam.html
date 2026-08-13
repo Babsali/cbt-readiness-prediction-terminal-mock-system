@@ -13,12 +13,14 @@
         padding: 20px;
         border-radius: 10px;
         margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
       }
       .option {
         padding: 10px;
         border: 1px solid #ddd;
         border-radius: 6px;
         margin: 5px 0;
+        cursor: pointer;
       }
       .option:hover {
         background: #eef2ff;
@@ -33,26 +35,39 @@
         font-size: 18px;
         cursor: pointer;
       }
+      #startBtn:hover { opacity: 0.9; }
       #examForm { display: none; }
+      img { max-width: 100%; border-radius: 8px; margin: 10px 0; }
     </style>
+    
+    <!-- MathJax for LaTeX Formulas -->
+    <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
   </head>
   <body>
     <div class="card">
       <h2>{{ exam['title'] }}</h2>
       <p>
-        Duration: {{ exam['duration_minutes'] }} mins | Questions: {{
-        questions|length }}
+        Duration: {{ exam['duration_minutes'] }} mins | Questions: {{ questions|length }}
       </p>
     </div>
+    
     {% if questions|length == 0 %}
     <div class="card">
       <b>No questions linked yet!</b> Go to
-      <a href="/exam/{{ exam['exam_id'] }}/manage">Manage Exam</a> to add
-      questions.
+      <a href="/exam/{{ exam['exam_id'] }}/manage">Manage Exam</a> to add questions.
     </div>
     {% else %}
 
-    <!-- v1.2.0: Anti-Cheat Start Button -->
+    <!-- v1.3.0: Anti-Cheat Start Button -->
     <div class="card" id="startCard">
       <p><b>Read Instructions:</b> Do not switch tabs, copy, paste, or right-click during the exam. All actions will be logged.</p>
       <button id="startBtn" onclick="startExam()">START EXAM</button>
@@ -61,8 +76,8 @@
     <form method="POST" action="/submit_exam" id="examForm">
       <input type="hidden" name="exam_id" value="{{ exam['exam_id'] }}" />
       <div class="card">
-        <label>Select Student Taking Exam:</label>
-        <select name="user_id" required>
+        <label><b>Select Student Taking Exam:</b></label>
+        <select name="user_id" required style="width:100%; padding:8px; margin-top:5px;">
           {% for u in users %}
           <option value="{{ u['user_id'] }}">
             {{ u['username'] }} - {{ u['full_name'] }}
@@ -70,45 +85,45 @@
           {% endfor %}
         </select>
       </div>
+      
       {% for q in questions %}
       <div class="card">
-        <b>Q{{ loop.index }}: {{ q['question_text'] }}</b>
+        <b>Q{{ loop.index }}: </b> 
+        <div>{{ q['question_text'] | safe }}</div>  <!-- FIXED: | safe allows images + LaTeX -->
+        
         <div style="margin-top: 10px">
           <div class="option">
-            <input
-              type="radio"
-              name="q_{{ q['question_id'] }}"
-              value="A"
-              required
-            />
-            A. {{ q['option_a'] }}
+            <input type="radio" name="q_{{ q['question_id'] }}" value="A" required />
+            A. {{ q['option_a'] | safe }}
           </div>
           <div class="option">
-            <input type="radio" name="q_{{ q['question_id'] }}" value="B" /> B.
-            {{ q['option_b'] }}
+            <input type="radio" name="q_{{ q['question_id'] }}" value="B" /> 
+            B. {{ q['option_b'] | safe }}
           </div>
           <div class="option">
-            <input type="radio" name="q_{{ q['question_id'] }}" value="C" /> C.
-            {{ q['option_c'] }}
+            <input type="radio" name="q_{{ q['question_id'] }}" value="C" /> 
+            C. {{ q['option_c'] | safe }}
           </div>
           <div class="option">
-            <input type="radio" name="q_{{ q['question_id'] }}" value="D" /> D.
-            {{ q['option_d'] }}
+            <input type="radio" name="q_{{ q['question_id'] }}" value="D" /> 
+            D. {{ q['option_d'] | safe }}
           </div>
         </div>
       </div>
       {% endfor %}
+      
       <div class="card">
         <button
           type="submit"
           style="
             padding: 15px;
             width: 100%;
-            background: green;
+            background: #16a34a;
             color: white;
             border: none;
             border-radius: 8px;
             font-size: 18px;
+            cursor: pointer;
           "
         >
           SUBMIT EXAM
@@ -117,7 +132,7 @@
     </form>
     {% endif %}
 
-    <!-- v1.2.0: Anti-Cheat Logging Script -->
+    <!-- v1.3.0: Anti-Cheat Logging Script -->
     <script>
       let examActive = false;
       const examId = {{ exam['exam_id'] }};

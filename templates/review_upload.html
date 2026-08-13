@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="text-3xl font-bold miva-blue-text mb-2">Step 2: Review & Edit Extracted Questions</h2>
+<p class="text-gray-600 mb-6">Please check OCR results below. Edit anything wrong before saving to DB.</p>
+
+<form method="POST" action="/admin/save_reviewed_questions">
+    {% for q in questions %}
+    <div class="card mb-6 border-l-4 border-purple-500">
+        <h3 class="font-bold text-lg mb-3">Question {{ loop.index }}</h3>
+        
+        <!-- Question Text -->
+        <label class="font-semibold">Question</label>
+        <textarea name="q_text_{{ loop.index0 }}" rows="2" class="w-full border p-2 rounded mb-3">{{ q.question_text }}</textarea>
+        
+        <!-- Options -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+            <div>
+                <label class="font-semibold">A</label>
+                <input name="q_a_{{ loop.index0 }}" value="{{ q.option_a }}" class="w-full border p-2 rounded">
+            </div>
+            <div>
+                <label class="font-semibold">B</label>
+                <input name="q_b_{{ loop.index0 }}" value="{{ q.option_b }}" class="w-full border p-2 rounded">
+            </div>
+            <div>
+                <label class="font-semibold">C</label>
+                <input name="q_c_{{ loop.index0 }}" value="{{ q.option_c }}" class="w-full border p-2 rounded">
+            </div>
+            <div>
+                <label class="font-semibold">D</label>
+                <input name="q_d_{{ loop.index0 }}" value="{{ q.option_d }}" class="w-full border p-2 rounded">
+            </div>
+        </div>
+
+        <!-- Answer, Topic, Difficulty -->
+        <div class="grid grid-cols-3 gap-3">
+            <div>
+                <label class="font-semibold">Correct Answer</label>
+                <select name="q_ans_{{ loop.index0 }}" class="w-full border p-2 rounded">
+                    <option value="A" {% if q.correct_answer=='A' %}selected{% endif %}>A</option>
+                    <option value="B" {% if q.correct_answer=='B' %}selected{% endif %}>B</option>
+                    <option value="C" {% if q.correct_answer=='C' %}selected{% endif %}>C</option>
+                    <option value="D" {% if q.correct_answer=='D' %}selected{% endif %}>D</option>
+                </select>
+            </div>
+            <div>
+                <label class="font-semibold">Topic</label>
+                <input name="q_topic_{{ loop.index0 }}" value="{{ q.topic }}" class="w-full border p-2 rounded">
+            </div>
+            <div>
+                <label class="font-semibold">Difficulty</label>
+                <select name="q_diff_{{ loop.index0 }}" class="w-full border p-2 rounded">
+                    <option value="Easy" {% if q.difficulty=='Easy' %}selected{% endif %}>Easy</option>
+                    <option value="Medium" {% if q.difficulty=='Medium' %}selected{% endif %}>Medium</option>
+                    <option value="Hard" {% if q.difficulty=='Hard' %}selected{% endif %}>Hard</option>
+                </select>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <button type="submit" class="miva-gold text-white px-8 py-4 rounded-lg font-bold w-full text-xl shadow">
+        Save All {{ questions|length }} Questions to Database
+    </button>
+</form>
+{% endblock %}

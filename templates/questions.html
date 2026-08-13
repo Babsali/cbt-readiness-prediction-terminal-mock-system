@@ -13,34 +13,85 @@
         padding: 20px;
         border-radius: 12px;
         margin-bottom: 15px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
       }
-      th,
-      td {
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th, td {
         padding: 10px;
         border-bottom: 1px solid #ddd;
         text-align: left;
+        vertical-align: top;
       }
       th {
         background: #f3f4f6;
       }
+      .btn-delete {
+        color: #dc2626;
+        font-weight: bold;
+        text-decoration: none;
+      }
+      .btn-delete:hover {
+        text-decoration: underline;
+      }
+      img { max-width: 200px; border-radius: 6px; }
+      a { color: #2563eb; text-decoration: none; }
+      a:hover { text-decoration: underline; }
     </style>
+    
+    <!-- MathJax for previewing LaTeX in admin -->
+    <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      }
+    };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
   </head>
   <body>
     <div class="card">
       <h2>All Questions ({{ questions|length }})</h2>
       <a href="/add_question">+ Add Question</a> | <a href="/">Home</a>
     </div>
-    {% for q in questions %}
+    
     <div class="card">
-      <b
-        >Q{{ q['question_id'] }} [{{ q['difficulty'] }} | {{ q['topic'] }} | {{
-        q['source_flag'] }}]</b
-      >
-      - Ans: {{ q['correct_answer'] }}<br />
-      {{ q['question_text'] }}<br /><br />
-      A) {{ q['option_a'] }}<br />B) {{ q['option_b'] }}<br />C) {{
-      q['option_c'] }}<br />D) {{ q['option_d'] }}
+      <table>
+        <tr>
+          <th>ID</th>
+          <th>Question</th>
+          <th>Options</th>
+          <th>Answer</th>
+          <th>Meta</th>
+          <th>Action</th>
+        </tr>
+        {% for q in questions %}
+        <tr>
+          <td>{{ q['question_id'] }}</td>
+          <td>{{ q['question_text'] | safe }}</td> <!-- | safe to preview images -->
+          <td>
+            A) {{ q['option_a'] | safe }}<br>
+            B) {{ q['option_b'] | safe }}<br>
+            C) {{ q['option_c'] | safe }}<br>
+            D) {{ q['option_d'] | safe }}
+          </td>
+          <td><b>{{ q['correct_answer'] }}</b></td>
+          <td>
+            {{ q['difficulty'] }}<br>
+            {{ q['topic'] }}<br>
+            <small>{{ q['source_flag'] }}</small>
+          </td>
+          <td>
+            <a href="/admin/delete_question/{{ q['question_id'] }}" 
+               onclick="return confirm('Delete Q{{ q['question_id'] }}? This cannot be undone.')"
+               class="btn-delete">Delete</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </table>
     </div>
-    {% endfor %}
   </body>
 </html>

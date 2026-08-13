@@ -1,88 +1,50 @@
-<!doctype html>
-<html>
-  <head>
-    <title>CBT Readiness Prediction System - Babatunde Salimon.S</title>
-    <style>
-      body {
-        font-family: Arial;
-        margin: 0;
-        background: #f5f7fb;
-      }
-      header {
-        text-align:center; 
-        padding: 25px; 
-        background: #1a56db; 
-        color: white;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      }
-      header h1 { margin: 5px 0; font-size: 22px; }
-      header h3 { margin: 5px 0; font-size: 16px; font-weight: normal; }
-      header p { margin: 3px 0; font-size: 14px; }
-      .container { padding: 30px; }
-      .card {
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      }
-      .btn {
-        padding: 12px 18px;
-        border-radius: 8px;
-        text-decoration: none;
-        color: white;
-        display: inline-block;
-        margin: 5px;
-        font-weight: bold;
-      }
-      .blue { background: #1a56db; }
-      .green { background: #0e9f6e; }
-      .orange { background: #c27803; }
-      .purple { background: #7c3aed; }
-      .red { background: #dc2626; }
-      .pink { background: #9333ea; }
-      .stat {
-        display: inline-block;
-        background: #eef2ff;
-        padding: 12px 18px;
-        border-radius: 8px;
-        margin: 5px;
-        font-weight: bold;
-        color: #1a56db;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1>Development of an Intelligent Offline Computer-Based Testing System</h1>
-      <h3>for Predicting Student Examination Readiness</h3>
-      <p><b>BABATUNDE SALIMON.S</b></p>
-      <p>Software Engineering Department, Faculty of Computer Science/Engineering</p>
-      <p>MiVA Open University, Abuja Nigeria</p>
-    </header>
+{% extends "base.html" %}
 
-    <div class="container">
-      <div class="card">
-        <h3>Dashboard Overview</h3>
-        <div class="stat">Users: {{ user_count }}</div>
-        <div class="stat">Questions: {{ q_count }}</div>
-        <div class="stat">Exams: {{ exam_count }}</div>
-        <div class="stat">Attempts: {{ attempt_count }}</div>
-        <p style="margin-top:15px;">Tables: {% for t in tables %}{{ t['name'] }}{% if not loop.last %}, {% endif %}{% endfor %}</p>
-      </div>
-
-      <div class="card">
-        <h3>Actions</h3>
-        <a class="btn blue" href="/add_user">+ Add User</a>
-        <a class="btn green" href="/add_question">+ Add Question</a>
-        <a class="btn orange" href="/add_exam">+ Create Exam</a>
-        <a class="btn purple" href="/exams">View Exams</a>
-        <a class="btn red" href="/attempts">View Results</a>
-        <br /><br />
-        <a href="/users">View Users</a> | <a href="/questions">View Questions</a>
-        <br /><br />
-        <a class="btn pink" href="/predict">📊 Predict Student Readiness</a>
-      </div>
+{% block content %}
+<div class="space-y-6">
+    <!-- Dashboard Overview Card -->
+    <div class="card">
+        <h3 class="text-2xl miva-blue-text font-bold mb-4">Dashboard Overview</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="bg-blue-50 p-4 rounded-lg text-center border-blue-100">
+                <div class="text-4xl font-bold miva-blue-text">{{ user_count }}</div>
+                <div class="text-gray-600">Users</div>
+            </div>
+            <div class="bg-blue-50 p-4 rounded-lg text-center border border-blue-100">
+                <div class="text-4xl font-bold miva-blue-text">{{ q_count }}</div>
+                <div class="text-gray-600">Questions</div>
+            </div>
+            <div class="bg-blue-50 p-4 rounded-lg text-center border border-blue-100">
+                <div class="text-4xl font-bold miva-blue-text">{{ exam_count }}</div>
+                <div class="text-gray-600">Exams</div>
+            </div>
+            <div class="bg-blue-50 p-4 rounded-lg text-center border-blue-100">
+                <div class="text-4xl font-bold miva-blue-text">{{ attempt_count }}</div>
+                <div class="text-gray-600">Attempts</div>
+            </div>
+        </div>
+        <p class="mt-4 text-sm text-gray-500">
+            DB Tables: {% for t in tables %}{{ t['name'] }}{% if not loop.last %}, {% endif %}{% endfor %}
+        </p>
     </div>
-  </body>
-</html>
+
+    <!-- Actions Card -->
+    <div class="card">
+        <h3 class="text-2xl miva-blue-text font-bold mb-4">Quick Actions</h3>
+        <div class="flex flex-wrap gap-3">
+            <a class="miva-blue text-white px-5 py-3 rounded-lg font-bold hover:opacity-90" href="/add_user">+ Add User</a>
+            <a class="bg-green-600 text-white px-5 py-3 rounded-lg font-bold hover:opacity-90" href="/add_question">+ Add Question</a>
+            <a class="miva-gold text-white px-5 py-3 rounded-lg font-bold hover:opacity-90" href="/add_exam">+ Create Exam</a>
+            <a class="bg-purple-600 text-white px-5 py-3 rounded-lg font-bold hover:opacity-90" href="/exams">View Exams</a>
+            <a class="bg-red-600 text-white px-5 py-3 rounded-lg font-bold hover:opacity-90" href="/attempts">View Results</a>
+        </div>
+        <div class="mt-4 space-x-4">
+            <a href="/users" class="miva-blue-text hover:underline font-semibold">View Users</a> |
+            <a href="/questions" class="miva-blue-text hover:underline font-semibold">View Questions</a>
+        </div>
+        <div class="mt-6 border-t pt-4">
+            <a class="miva-gold text-white px-6 py-3 rounded-lg font-bold hover:opacity-90" href="/predict">📊 Predict Student Readiness</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

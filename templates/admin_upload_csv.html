@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card max-w-2xl mx-auto">
+    <h2 class="text-3xl font-bold miva-blue-text mb-2">Upload CSV Only - Bulk Import</h2>
+    <p class="mb-6 text-gray-600">Fast upload for 100+ questions. No OCR. Must use template.</p>
+
+    <a href="/admin/download_template"
+       class="miva-blue text-white px-5 py-3 rounded-lg font-bold hover:opacity-90 mb-6 inline-block">
+        ⬇️ Download CSV Template
+    </a>
+
+    <div class="bg-yellow-50 p-4 rounded-lg mb-6 border border-yellow-300">
+        <p class="font-bold miva-blue-text mb-2">Required CSV Columns:</p>
+        <p class="text-sm font-mono bg-white p-2 rounded">question_text, option_a, option_b, option_c, option_d, correct_answer, difficulty, topic</p>
+        <p class="text-xs mt-2">correct_answer must be: A, B, C, or D</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="p-3 mb-4 rounded-lg {% if category == 'danger' %}bg-red-100 text-red-700{% elif category == 'success' %}bg-green-100 text-green-700{% else %}bg-blue-100 text-blue-700{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" enctype="multipart/form-data" class="space-y-4">
+        <div>
+            <label class="block text-gray-700 font-bold mb-2">Select CSV File</label>
+            <input type="file" name="csv_file" accept=".csv" required 
+                   class="w-full border-gray-300 rounded-lg p-3"/>
+        </div>
+        <button type="submit" class="miva-gold text-white px-6 py-3 rounded-lg font-bold w-full text-lg shadow hover:opacity-90">
+            Upload CSV
+        </button>
+    </form>
+</div>
+{% endblock %}
