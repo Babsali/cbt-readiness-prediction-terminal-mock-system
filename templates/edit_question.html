@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-3xl mx-auto">
+    <h2 class="text-3xl font-bold text-blue-900 mb-6">Edit Question #{{ q.question_id }}</h2>
+
+    <form method="POST" class="bg-white p-8 rounded-lg shadow border">
+        
+        <div class="mb-4">
+            <label class="block text-gray-700 font-bold mb-2">Topic</label>
+            <input type="text" name="topic" value="{{ q.topic }}" class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-900" required>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-gray-700 font-bold mb-2">Question Text</label>
+            <textarea name="question_text" rows="4" class="w-full border rounded-lg px-3 py-2" required>{{ q.question_text }}</textarea>
+        </div>
+
+        {% if q.image_path %}
+        <div class="mb-4">
+            <label class="block text-gray-700 font-bold mb-2">Current Image</label>
+            <img src="{{ q.image_path }}" alt="Current question image" class="max-h-48 rounded border mb-2">
+            <label class="inline-flex items-center gap-2 text-sm text-gray-700">
+                <input type="checkbox" name="remove_image" value="1"> Remove image
+            </label>
+        </div>
+        {% endif %}
+
+        <div class="mb-4">
+            <label class="block text-gray-700 font-bold mb-2">Upload New Image</label>
+            <input type="file" name="image" accept="image/*" class="w-full border rounded-lg px-3 py-2">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div><label class="block text-gray-700 font-bold mb-2">Option A</label><input type="text" name="option_a" value="{{ q.option_a }}" class="w-full border rounded-lg px-3 py-2" required></div>
+            <div><label class="block text-gray-700 font-bold mb-2">Option B</label><input type="text" name="option_b" value="{{ q.option_b }}" class="w-full border rounded-lg px-3 py-2" required></div>
+            <div><label class="block text-gray-700 font-bold mb-2">Option C</label><input type="text" name="option_c" value="{{ q.option_c }}" class="w-full border rounded-lg px-3 py-2"></div>
+            <div><label class="block text-gray-700 font-bold mb-2">Option D</label><input type="text" name="option_d" value="{{ q.option_d }}" class="w-full border rounded-lg px-3 py-2"></div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <div>
+                <label class="block text-gray-700 font-bold mb-2">Correct Answer</label>
+                <select name="correct_answer" class="w-full border rounded-lg px-3 py-2">
+                    <option value="A" {% if q.correct_answer=='A' %}selected{% endif %}>A</option>
+                    <option value="B" {% if q.correct_answer=='B' %}selected{% endif %}>B</option>
+                    <option value="C" {% if q.correct_answer=='C' %}selected{% endif %}>C</option>
+                    <option value="D" {% if q.correct_answer=='D' %}selected{% endif %}>D</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-gray-700 font-bold mb-2">Difficulty</label>
+                <select name="difficulty" class="w-full border rounded-lg px-3 py-2">
+                    <option value="Easy" {% if q.difficulty|lower=='easy' %}selected{% endif %}>Easy</option>
+                    <option value="Medium" {% if q.difficulty|lower=='medium' %}selected{% endif %}>Medium</option>
+                    <option value="Hard" {% if q.difficulty|lower=='hard' %}selected{% endif %}>Hard</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="flex gap-4 justify-end">
+            <a href="{{ url_for('questions_list') }}" class="bg-gray-500 text-white px-6 py-2 rounded-lg font-bold hover:bg-gray-600">Cancel</a>
+            <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700">Save Changes</button>
+        </div>
+
+    </form>
+</div>
+{% endblock %}

@@ -1,46 +1,16 @@
 <!doctype html>
 <html>
   <head>
-    <title>Questions</title>
+    <title>Questions - v1.4.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
       body {
         font-family: Arial;
-        margin: 40px;
         background: #f5f7fb;
       }
-      .card {
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        margin-bottom: 15px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      th, td {
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
-        text-align: left;
-        vertical-align: top;
-      }
-      th {
-        background: #f3f4f6;
-      }
-      .btn-delete {
-        color: #dc2626;
-        font-weight: bold;
-        text-decoration: none;
-      }
-      .btn-delete:hover {
-        text-decoration: underline;
-      }
       img { max-width: 200px; border-radius: 6px; }
-      a { color: #2563eb; text-decoration: none; }
-      a:hover { text-decoration: underline; }
     </style>
-    
+
     <!-- MathJax for previewing LaTeX in admin -->
     <script>
     window.MathJax = {
@@ -52,45 +22,90 @@
     </script>
     <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
   </head>
-  <body>
-    <div class="card">
-      <h2>All Questions ({{ questions|length }})</h2>
-      <a href="/add_question">+ Add Question</a> | <a href="/">Home</a>
+  <body class="p-8">
+
+    <div class="bg-white p-6 rounded-xl shadow mb-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-bold">All Questions <span class="text-gray-500 text-lg">({{ questions|length }})</span></h2>
+        <div class="space-x-3">
+          <a href="/add_question" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">+ Add Question</a>
+          <a href="/" class="text-blue-600 hover:underline">Home</a>
+        </div>
+      </div>
+
+      <!-- v1.4.0 SEARCH + FILTER -->
+      <form method="GET" action="/questions/search" class="flex flex-wrap gap-3 items-end">
+        <div class="flex-1 min-w-[200px]">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+          <input type="text" name="q" value="{{ q or '' }}" placeholder="Search question text..." class="border p-2 rounded-lg w-full focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
+          <select name="type" class="border p-2 rounded-lg">
+            <option value="">All Types</option>
+            <option value="objective" {% if q_type=='objective' %}selected{% endif %}>Objective</option>
+            <option value="theory" {% if q_type=='theory' %}selected{% endif %}>Theory</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Difficulty</label>
+          <select name="difficulty" class="border p-2 rounded-lg">
+            <option value="">All Levels</option>
+            <option value="easy" {% if difficulty=='easy' %}selected{% endif %}>Easy</option>
+            <option value="medium" {% if difficulty=='medium' %}selected{% endif %}>Medium</option>
+            <option value="hard" {% if difficulty=='hard' %}selected{% endif %}>Hard</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Topic</label>
+          <input type="text" name="topic" value="{{ topic or '' }}" placeholder="e.g Calculus" class="border p-2 rounded-lg w-40">
+        </div>
+        <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700">Search</button>
+        <a href="/questions" class="bg-gray-200 text-gray-800 px-5 py-2 rounded-lg hover:bg-gray-300">Reset</a>
+      </form>
     </div>
-    
-    <div class="card">
-      <table>
-        <tr>
-          <th>ID</th>
-          <th>Question</th>
-          <th>Options</th>
-          <th>Answer</th>
-          <th>Meta</th>
-          <th>Action</th>
-        </tr>
+
+    <div class="bg-white p-6 rounded-xl shadow overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr class="bg-gray-100 text-left">
+            <th class="p-3">ID</th>
+            <th class="p-3">Question</th>
+            <th class="p-3">Options</th>
+            <th class="p-3">Answer</th>
+            <th class="p-3">Meta</th>
+            <th class="p-3">Action</th>
+          </tr>
+        </thead>
+        <tbody>
         {% for q in questions %}
-        <tr>
-          <td>{{ q['question_id'] }}</td>
-          <td>{{ q['question_text'] | safe }}</td> <!-- | safe to preview images -->
-          <td>
+        <tr class="border-b hover:bg-gray-50">
+          <td class="p-3 font-mono text-sm">{{ q['question_id'] }}</td>
+          <td class="p-3">{{ q['question_text'] | safe }}</td>
+          <td class="p-3 text-sm">
             A) {{ q['option_a'] | safe }}<br>
             B) {{ q['option_b'] | safe }}<br>
             C) {{ q['option_c'] | safe }}<br>
             D) {{ q['option_d'] | safe }}
           </td>
-          <td><b>{{ q['correct_answer'] }}</b></td>
-          <td>
-            {{ q['difficulty'] }}<br>
-            {{ q['topic'] }}<br>
-            <small>{{ q['source_flag'] }}</small>
+          <td class="p-3"><b class="text-green-600">{{ q['correct_answer'] }}</b></td>
+          <td class="p-3 text-sm">
+            <span class="px-2 py-1 rounded-full text-xs {% if q['difficulty']=='hard' %}bg-red-100 text-red-700{% elif q['difficulty']=='easy' %}bg-green-100 text-green-700{% else %}bg-yellow-100 text-yellow-700{% endif %}">
+              {{ q['difficulty'] }}
+            </span><br>
+            <b>{{ q['topic'] }}</b><br>
+            <small class="text-gray-500">{{ q['source_flag'] }}</small>
           </td>
-          <td>
-            <a href="/admin/delete_question/{{ q['question_id'] }}" 
+          <td class="p-3">
+            <a href="/admin/delete_question/{{ q['question_id'] }}"
                onclick="return confirm('Delete Q{{ q['question_id'] }}? This cannot be undone.')"
-               class="btn-delete">Delete</a>
+               class="text-red-600 font-bold hover:underline">Delete</a>
           </td>
         </tr>
+        {% else %}
+        <tr><td colspan="6" class="p-6 text-center text-gray-500">No questions found. Try resetting filters.</td></tr>
         {% endfor %}
+        </tbody>
       </table>
     </div>
   </body>

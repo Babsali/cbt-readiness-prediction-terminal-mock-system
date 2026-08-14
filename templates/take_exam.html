@@ -89,6 +89,11 @@
       {% for q in questions %}
       <div class="card">
         <b>Q{{ loop.index }}: </b> 
+        {% if q['image_path'] %}
+        <div style="margin: 10px 0;">
+          <img src="{{ q['image_path'] }}" alt="Question diagram" />
+        </div>
+        {% endif %}
         <div>{{ q['question_text'] | safe }}</div>  <!-- FIXED: | safe allows images + LaTeX -->
         
         <div style="margin-top: 10px">
