@@ -3,3 +3,5 @@ __pycache__/
 database.db
 *.pyc
 *.pkl
+echo "static/uploads/*" >> .gitignore
+echo "!static/uploads/.gitkeep" >> .gitignore
