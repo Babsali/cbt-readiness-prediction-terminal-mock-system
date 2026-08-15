@@ -1,170 +1,125 @@
-<!doctype html>
-<html>
-  <head>
-    <title>Take {{ exam['title'] }}</title>
-    <style>
-      body {
-        font-family: Arial;
-        margin: 30px;
-        background: #f5f7fb;
-      }
-      .card {
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        margin-bottom: 15px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      }
-      .option {
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 6px;
-        margin: 5px 0;
-        cursor: pointer;
-      }
-      .option:hover {
-        background: #eef2ff;
-      }
-      #startBtn {
-        padding: 15px;
-        width: 100%;
-        background: #2563eb;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 18px;
-        cursor: pointer;
-      }
-      #startBtn:hover { opacity: 0.9; }
-      #examForm { display: none; }
-      img { max-width: 100%; border-radius: 8px; margin: 10px 0; }
-    </style>
-    
-    <!-- MathJax for LaTeX Formulas -->
-    <script>
-    window.MathJax = {
-      tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']],
-        displayMath: [['$$', '$$'], ['\\[', '\\]']]
-      },
-      svg: { fontCache: 'global' }
-    };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
-  </head>
-  <body>
-    <div class="card">
-      <h2>{{ exam['title'] }}</h2>
-      <p>
-        Duration: {{ exam['duration_minutes'] }} mins | Questions: {{ questions|length }}
-      </p>
-    </div>
-    
-    {% if questions|length == 0 %}
-    <div class="card">
-      <b>No questions linked yet!</b> Go to
-      <a href="/exam/{{ exam['exam_id'] }}/manage">Manage Exam</a> to add questions.
-    </div>
-    {% else %}
-
-    <!-- v1.3.0: Anti-Cheat Start Button -->
-    <div class="card" id="startCard">
-      <p><b>Read Instructions:</b> Do not switch tabs, copy, paste, or right-click during the exam. All actions will be logged.</p>
-      <button id="startBtn" onclick="startExam()">START EXAM</button>
-    </div>
-
-    <form method="POST" action="/submit_exam" id="examForm">
-      <input type="hidden" name="exam_id" value="{{ exam['exam_id'] }}" />
-      <div class="card">
-        <label><b>Select Student Taking Exam:</b></label>
-        <select name="user_id" required style="width:100%; padding:8px; margin-top:5px;">
-          {% for u in users %}
-          <option value="{{ u['user_id'] }}">
-            {{ u['username'] }} - {{ u['full_name'] }}
-          </option>
-          {% endfor %}
-        </select>
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto mt-6">
+  <div class="bg-white p-6 rounded-lg shadow mb-4 sticky top-0 z-10">
+    <div class="flex justify-between items-center">
+      <div>
+        <h2 class="text-xl font-bold">{{ subject }}</h2>
+        <p>{{ student_name }} - {{ matric_no }}</p>
       </div>
-      
-      {% for q in questions %}
-      <div class="card">
-        <b>Q{{ loop.index }}: </b> 
-        {% if q['image_path'] %}
-        <div style="margin: 10px 0;">
-          <img src="{{ q['image_path'] }}" alt="Question diagram" />
-        </div>
+      <div id="timer" class="text-3xl font-bold text-red-600">30:00</div>
+    </div>
+  </div>
+
+  <form method="POST" action="{{ url_for('submit_exam') }}" id="examForm">
+    <input type="hidden" name="student_name" value="{{ student_name }}">
+    <input type="hidden" name="matric_no" value="{{ matric_no }}">
+    <input type="hidden" name="subject" value="{{ subject }}">
+    <!-- Hidden fields for ML features -->
+    <input type="hidden" name="time_spent" id="time_spent_input">
+    <input type="hidden" name="question_changes" id="question_changes_input">
+
+    {% for q in questions %}
+    <div class="bg-white p-6 rounded-lg shadow mb-4">
+      <p class="font-semibold mb-3">Question {{ loop.index }}: {{ q.question_text }}</p>
+      {% if q.image_path %}
+      <img src="{{ q.image_path }}" class="max-w-md mb-3 rounded border">
+      {% endif %}
+      <div class="space-y-2">
+        <label class="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+            <input type="radio" name="q_{{ q.question_id }}" value="A" required>
+            <span>A) {{ q.option_a }}</span>
+        </label>
+        <label class="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+            <input type="radio" name="q_{{ q.question_id }}" value="B" required>
+            <span>B) {{ q.option_b }}</span>
+        </label>
+        {% if q.option_c %}
+        <label class="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+            <input type="radio" name="q_{{ q.question_id }}" value="C" required>
+            <span>C) {{ q.option_c }}</span>
+        </label>
         {% endif %}
-        <div>{{ q['question_text'] | safe }}</div>  <!-- FIXED: | safe allows images + LaTeX -->
-        
-        <div style="margin-top: 10px">
-          <div class="option">
-            <input type="radio" name="q_{{ q['question_id'] }}" value="A" required />
-            A. {{ q['option_a'] | safe }}
-          </div>
-          <div class="option">
-            <input type="radio" name="q_{{ q['question_id'] }}" value="B" /> 
-            B. {{ q['option_b'] | safe }}
-          </div>
-          <div class="option">
-            <input type="radio" name="q_{{ q['question_id'] }}" value="C" /> 
-            C. {{ q['option_c'] | safe }}
-          </div>
-          <div class="option">
-            <input type="radio" name="q_{{ q['question_id'] }}" value="D" /> 
-            D. {{ q['option_d'] | safe }}
-          </div>
-        </div>
+        {% if q.option_d %}
+        <label class="flex items-center gap-2 p-2 hover:bg-gray-50 rounded cursor-pointer">
+            <input type="radio" name="q_{{ q.question_id }}" value="D" required>
+            <span>D) {{ q.option_d }}</span>
+        </label>
+        {% endif %}
       </div>
-      {% endfor %}
-      
-      <div class="card">
-        <button
-          type="submit"
-          style="
-            padding: 15px;
-            width: 100%;
-            background: #16a34a;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            cursor: pointer;
-          "
-        >
-          SUBMIT EXAM
-        </button>
-      </div>
-    </form>
-    {% endif %}
+    </div>
+    {% endfor %}
 
-    <!-- v1.3.0: Anti-Cheat Logging Script -->
-    <script>
-      let examActive = false;
-      const examId = {{ exam['exam_id'] }};
+    <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg text-lg font-bold hover:bg-green-700">Submit Exam</button>
+  </form>
+</div>
 
-      function startExam() {
-        examActive = true;
-        document.getElementById('startCard').style.display = 'none';
-        document.getElementById('examForm').style.display = 'block';
-        logEvent('exam_start');
-      }
+<script>
+let time = {{ duration }} * 60;
+const timerEl = document.getElementById('timer');
+const formEl = document.getElementById('examForm');
+let countdown;
 
-      window.addEventListener('blur', () => {
-        if(examActive) logEvent('tab_switch');
-      });
-      document.addEventListener('copy', () => { if(examActive) logEvent('copy'); });
-      document.addEventListener('paste', () => { if(examActive) logEvent('paste'); });
-      document.addEventListener('contextmenu', e => { 
-        if(examActive) {e.preventDefault(); logEvent('right_click');}
-      });
+// ===== NEW: TRACK ML FEATURES =====
+let examStartTime = Date.now();
+let questionChanges = {}; // { "1": 2, "2": 1 } means q1 changed twice
 
-      function logEvent(type) {
-        fetch('/api/log_event', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({event_type: type, exam_id: examId})
-        });
-      }
-    </script>
-  </body>
-</html>
+// Track every time a radio button changes for a question
+document.querySelectorAll('input[type=radio]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        let qid = this.name.split('_')[1]; // get "1" from "q_1"
+        questionChanges[qid] = (questionChanges[qid] || 0) + 1;
+    });
+});
+
+function startTimer() {
+    countdown = setInterval(() => {
+        let minutes = Math.floor(time / 60);
+        let seconds = time % 60;
+        timerEl.textContent = `${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+
+        if(time <= 300){ timerEl.classList.add('animate-pulse'); }
+        if(time <= 0){
+            clearInterval(countdown);
+            autoSubmitCheck();
+        }
+        time--;
+    }, 1000);
+}
+
+function prepareAndSubmit() {
+    // Calculate time spent and put in hidden input
+    let timeSpent = Math.floor((Date.now() - examStartTime) / 1000);
+    document.getElementById('time_spent_input').value = timeSpent;
+
+    // Put question changes JSON in hidden input
+    document.getElementById('question_changes_input').value = JSON.stringify(questionChanges);
+
+    formEl.submit();
+}
+
+function autoSubmitCheck(){
+    let total = {{ questions|length }};
+    let answered = document.querySelectorAll('input[type=radio]:checked').length;
+    let unanswered = total - answered;
+
+    let confirmSubmit = confirm(`Time Up!\n\nQuestions Answered: ${answered}\nQuestions Left: ${unanswered}\n\nDo you want to SUBMIT now? Click OK to Submit, Cancel to get 1 more minute.`);
+
+    if(confirmSubmit){
+        prepareAndSubmit();
+    } else {
+        time = 60; // give 1 more minute
+        timerEl.classList.remove('animate-pulse');
+        startTimer(); // restart timer
+    }
+}
+
+// Override normal submit to capture data first
+formEl.addEventListener('submit', (e) => {
+    e.preventDefault();
+    prepareAndSubmit();
+});
+
+startTimer(); // start on load
+</script>
+{% endblock %}

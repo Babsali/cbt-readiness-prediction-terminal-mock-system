@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-2xl mx-auto mt-10 text-center bg-white p-8 rounded-lg shadow">
+  <h2 class="text-3xl font-bold mb-4">Exam Completed</h2>
+  <p class="text-lg mb-6">{{ student_name }}</p>
+  
+  <div class="grid grid-cols-2 gap-4 mb-6">
+    <div class="bg-blue-100 p-4 rounded">
+      <p class="text-sm">Score</p>
+      <p class="text-2xl font-bold">{{ score }}/{{ total }}</p>
+    </div>
+    <div class="bg-purple-100 p-4 rounded">
+      <p class="text-sm">Percentage</p>
+      <p class="text-2xl font-bold">{{ percentage }}%</p>
+    </div>
+  </div>
+
+  <div class="p-6 rounded-lg {% if readiness_class == 'Ready' %}bg-green-100{% else %}bg-red-100{% endif %}">
+    <p class="text-sm">ML Readiness Prediction</p>
+    <p class="text-3xl font-bold">{{ readiness_class }}</p>
+    <p class="text-lg">Confidence: {{ readiness_score }}%</p>
+  </div>
+
+  <a href="{{ url_for('home') }}" class="mt-6 inline-block bg-gray-800 text-white px-6 py-2 rounded">Go Home</a>
+</div>
+{% endblock %}
